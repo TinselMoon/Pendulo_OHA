@@ -3,14 +3,15 @@ import numpy as np
 import pandas as pd
 
 # ========= CONFIG =========
-video_path = "pendulo.mp4"
+video_path = "pendulo_preto.mp4"
 output_csv = "pendulo_posicoes.csv"
 
 # AJUSTE MANUAL (IMPORTANTE)
 # Coloque um retângulo que contenha a massa no primeiro frame
-x0, y0, w, h = 880, 500, 120, 120  # <-- MUDE ISSO
-
-pad = 100  # área de busca ao redor do ponto
+#x0, y0, w, h = 880, 500, 120, 120  # <-- MUDE ISSO
+x0, y0 = 1100, 720
+w, h = 100, 100
+pad = 80  # área de busca ao redor do ponto
 # ==========================
 
 cap = cv2.VideoCapture(video_path)
@@ -57,12 +58,16 @@ while True:
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
 
     # Threshold automático
-    _, thresh = cv2.threshold(
-    gray, 100, 255, cv2.THRESH_BINARY_INV
-    )
+    #_, thresh = cv2.threshold(
+    #gray, 100, 255, cv2.THRESH_BINARY_INV
+    #)
     #_, thresh = cv2.threshold(
     #    gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
     #)
+
+    _, thresh = cv2.threshold(
+    gray, 80, 255, cv2.THRESH_BINARY_INV
+    )
 
     # Limpeza de ruído
     kernel = np.ones((3, 3), np.uint8)
