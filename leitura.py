@@ -23,16 +23,15 @@ x0 = 673
 y0 = 665
 w = 68
 h = 75
-# Volta para o início do vídeo
+
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
 dados = []
 
-# Janela da busca ao redor da posição anterior
 pad = 40
 
 trajetoria = [] #pontos lidos a cada frame
-# Centro inicial aproximado
+
 cx_prev = x0 + w // 2
 cy_prev = y0 + h // 2
 
@@ -41,7 +40,6 @@ for frame_idx in range(frame_count):
     if not ret:
         break
 
-    # Define uma área de busca em torno da posição anterior
     x1 = max(cx_prev - pad, 0)
     y1 = max(cy_prev - pad, 0)
     x2 = min(cx_prev + pad, frame.shape[1] - 1)
@@ -56,20 +54,16 @@ for frame_idx in range(frame_count):
 
     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    # Remove ruído
     kernel = np.ones((3, 3), np.uint8)
     thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=1)
     thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=2)
 
-    # Encontra contornos
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if len(contours) == 0:
-        # Se falhar, mantém a última posição
         x_center = cx_prev
         y_center = cy_prev
     else:
-        # Escolhe o maior contorno como candidato
         c = max(contours, key=cv2.contourArea)
         area = cv2.contourArea(c)
 
@@ -94,10 +88,8 @@ for frame_idx in range(frame_count):
     for i in range(1, len(trajetoria)):
         cv2.line(frame, trajetoria[i - 1], trajetoria[i], (0, 255, 255), 2)
 
-    # mostrar frame
     cv2.imshow("Tracking Pendulo", frame)
 
-    # ESC para sair
     if cv2.waitKey(10) & 0xFF == 27:
         break
 
