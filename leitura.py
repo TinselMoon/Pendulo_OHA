@@ -31,6 +31,7 @@ dados = []
 # Janela da busca ao redor da posição anterior
 pad = 40
 
+trajetoria = [] #pontos lidos a cada frame
 # Centro inicial aproximado
 cx_prev = x0 + w // 2
 cy_prev = y0 + h // 2
@@ -86,8 +87,21 @@ for frame_idx in range(frame_count):
 
     cx_prev, cy_prev = x_center, y_center
 
+    trajetoria.append((cx_prev, cy_prev))
     t = frame_idx / fps
     dados.append([frame_idx, t, x_center, y_center])
+
+    for i in range(1, len(trajetoria)):
+        cv2.line(frame, trajetoria[i - 1], trajetoria[i], (0, 255, 255), 2)
+
+    # mostrar frame
+    cv2.imshow("Tracking Pendulo", frame)
+
+    # ESC para sair
+    if cv2.waitKey(10) & 0xFF == 27:
+        break
+
+    frame_idx += 1
 
 cap.release()
 cv2.destroyAllWindows()
